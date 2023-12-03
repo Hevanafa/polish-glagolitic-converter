@@ -1,0 +1,154 @@
+<html>
+<head>
+<style>
+#result {
+	font-size: 200%;
+}
+</style>
+</head>
+
+<body>
+<h1>Glagolitic Converter</h1>
+
+<input id="latin" onkeydown="check_enter(event)" />
+<p id="result"></p>
+
+<h2>Sources</h2>
+<ul>
+	<li>https://en.wikipedia.org/wiki/Glagolitic_script</li>
+	<li>https://www.omniglot.com/conscripts/glagolicy.htm</li>
+</ul>
+</body>
+<script>
+
+const Regex = RegExp;
+
+const i_and = "Ⰻ";
+
+// The dictionary contains all capitals
+// Add the charcode by 48 to get the small letters
+
+// ć from czi, dź from dżi, gi, chi, ki, ri, ś from szi, ść from szczi, źi from rzi/żi
+const special_pairs = {
+	szcz: "Ⱋ",
+	
+	chi: "ⰘⰋ",  // /xi/
+	// ści: "ⰛⰋ",  ś + ć
+	dzi: "ⰌⰋ",
+	
+	ci: "ⰝⰋ",
+	gi: "ⰃⰋ",
+	ki: "ⰍⰋ",
+	ri: "ⰓⰋ",
+	si: "ⰞⰋ",
+	ść: "ⰛⰋ",
+	dź: "ⰌⰋ",
+	źi: "ⰆⰋ",
+	
+	ć: "ⰝⰋ",
+	ś: "ⰞⰋ"
+}
+
+const digraph_pairs = {
+	ch: "Ⱈ",
+	cz: "Ⱍ",
+	dz: "Ⰷ",
+	dź: "Ⰼ",
+	dż: "Ⰼ",
+	ie: "Ⱔ",
+	je: "Ⱔ",
+	ję: "Ⱗ",
+	ią: "Ⱙ",
+	ię: "Ⱗ",
+	ja: "Ⱑ",  //  /æ/ or /jɑ/
+	ją: "Ⱙ",
+	jo: "Ⱖ",
+	jó: "Ⱓ",  // same as ju
+	ju: "Ⱓ",
+	rz: "Ⰶ",
+	sz: "Ⱎ",
+	ż: "Ⰶ",
+	
+	ti: "Ⱋ",
+	yi: "ⰟⰊ",  // Russian Ы
+	th: "Ⱚ",  // Greek Theta
+	ue: "Ⱏ",  //  /ɯ/
+	// Ⱛ  // Greek Upsilon
+}
+
+const single_pairs = {
+	a: "Ⰰ",
+	ą: "Ⱘ",  // /ɔ̃/
+	b: "Ⰱ",
+	c: "Ⱌ",
+	
+	e: "Ⰵ",
+	ę: "Ⱕ",
+	d: "Ⰴ",
+	f: "Ⱇ",
+	g: "Ⰳ",
+	h: "Ⱈ",
+	i: "Ⰹ", // Ⰺ, Ⰹ  // Ⰻ i (and)
+	j: "Ⰺ",
+	k: "Ⰽ",  // different from Omniglot
+	l: "Ⰾ",
+	ł: "Ⱉ",
+	m: "Ⰿ",  // different from Omniglot
+	n: "Ⱀ",
+	o: "Ⱁ",  // Ⱁ: /o/, Ⱉ: /ɔ/
+	ó: "Ⱆ",  // same as u
+	p: "Ⱂ",
+	r: "Ⱃ",
+	s: "Ⱄ",
+	t: "Ⱅ",
+	u: "Ⱆ",
+	y: "Ⱏ",  // schwa
+	v: "Ⰲ",
+	w: "Ⰲ",
+	z: "Ⰸ",
+	ź: "Ⰶ",
+	ż: "Ⰶ",
+}
+
+function get_glagolitic(input_str) {
+	let ans = input_str.toLowerCase()
+	console.log(ans)
+	
+	// replace special cases
+	for (const [k, v] of Object.entries(special_pairs)) {
+		ans = ans.replace(new Regex(k, "g"), v);
+	}
+	
+	// replace digraphs
+	for (const [k, v] of Object.entries(digraph_pairs)) {
+		// console.log(k)
+		ans = ans.replace(new Regex(k, "g"), v);
+		
+		// replace with <ruby> tag
+		// ans = ans.replace(new Regex(k, "g"), ` ${v} <rt>${k}</rt>`);
+	}
+	
+	// replace single letters
+	for (const [k, v] of Object.entries(single_pairs)) {
+		ans = ans.replace(new Regex(k, "g"), v);
+		
+		// replace with <ruby> tag
+		// ans = ans.replace(new Regex(k, "g"), ` ${v} <rt>${k}</rt>`);
+	}
+	
+	// console.log(ans[0]?.charCodeAt(0))
+	
+	// console.log(`<ruby>${ans}</ruby>`)
+	
+	result.innerHTML = ans
+}
+
+
+function check_enter(e) {
+	if (e.which == 13) {
+		get_glagolitic(latin.value.toLowerCase())
+
+	}
+}
+</script>
+</html>
